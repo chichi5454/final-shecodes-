@@ -8,6 +8,7 @@ import React, { useState } from "react";
 const Weather = () => {
   const [city, setCity] = useState("");
   const [weather, setWeather] = useState("null");
+  const [loaded, setLoaded] = useState("");
 
   function displayWeather(response) {
     setWeather({
@@ -21,6 +22,7 @@ const Weather = () => {
 
   function updateCity(event) {
     setCity(event.target.value);
+    setLoaded(true);
   }
 
   function handleSubmit(event) {
@@ -32,39 +34,45 @@ const Weather = () => {
     axios.get(apiUrl).then(displayWeather);
   }
 
-  return (
-    <div className="weatherWrapper">
-      <div className="weatherForm">
-        <form onSubmit={handleSubmit}>
-          <input
-            type="search"
-            placeholder="Enter City"
-            onChange={updateCity}
-            className="search"
-          />
-          <button>Search</button>
-        </form>
-      </div>
-      <div className="weatherDescription">
-        <div className="firstTier">
-          <h1>{city}</h1>
-          <ul>
-            <li>Description: {weather.description}</li>
-            <li>Humidity: {weather.humidity}%</li>
-            <li>Wind: {weather.wind}km/h</li>
-          </ul>
-        </div>
-        <div className="secondTier">
-          <ul>
-            <li>
-              <img src={weather.icon} alt={weather.description} />
-            </li>
-            <li>Temperature: {Math.round(weather.temperature)}°C</li>
-          </ul>
-        </div>
-      </div>
-    </div>
+  let form = (
+    <form onSubmit={handleSubmit}>
+      <input
+        type="search"
+        placeholder="Enter City"
+        onChange={updateCity}
+        className="search"
+      />
+      <button>Search</button>
+    </form>
   );
+
+  if (loaded) {
+    return (
+      <div className="weatherWrapper">
+        <div className="weatherForm">{form}</div>
+        <div className="weatherDescription">
+          <div className="firstTier">
+            <h1>{city}</h1>
+            <ul>
+              <li>Description: {weather.description}</li>
+              <li>Humidity: {weather.humidity}%</li>
+              <li>Wind: {weather.wind}km/h</li>
+            </ul>
+          </div>
+          <div className="secondTier">
+            <ul>
+              <li>
+                <img src={weather.icon} alt={weather.description} />
+              </li>
+              <li>Temperature: {Math.round(weather.temperature)}°C</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    );
+  } else {
+    return form;
+  }
 };
 
 export default Weather;
